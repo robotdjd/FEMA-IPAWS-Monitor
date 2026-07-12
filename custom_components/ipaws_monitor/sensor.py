@@ -24,14 +24,15 @@ WATCHED_EVENTS = {
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the sensor platform from a config entry."""
-    # Retrieve the unique list of FIPS codes configured by this user
     fips_codes = hass.data[DOMAIN][entry.entry_id]
     
     sensor = IpawsMonitorSensor(fips_codes)
     async_add_entities([sensor], True)
 
-    def update_sensor(now):
-        sensor.update_data()
+    async def update_sensor(now):
+        # Safely run the blocking network update inside HA's thread executor pool
+        await hass.async_add_executor_job(sensor.update_data)
+        # Write the state safely back inside the main event loop
         sensor.async_write_ha_state()
 
     async_track_time_interval(hass, update_sensor, SCAN_INTERVAL)
@@ -45,7 +46,6 @@ class IpawsMonitorSensor(SensorEntity):
         self._state = "No alerts at this time"
         self._attrs = {}
         self.watched_fips = set(fips_codes)
-        self.seen_alerts = set()
 
     @property
     def name(self):
@@ -53,7 +53,7 @@ class IpawsMonitorSensor(SensorEntity):
 
     @property
     def unique_id(self):
-        return f"ipaws_monitor_{''.join(self.watched_fips)}"
+        return f"ipaws_monitor_{''.join(sorted(self.watched_fips))}"
 
     @property
     def state(self):
@@ -108,7 +108,7 @@ class IpawsMonitorSensor(SensorEntity):
         return False
 
     def update_data(self):
-        """Fetch data from the FEMA feed and process states."""
+        """Fetch data from the FEMA feed and process states (called inside executor thread)."""
         try:
             feed = self.get_feed()
             entries = feed.findall("atom:entry", ATOM_NS)
