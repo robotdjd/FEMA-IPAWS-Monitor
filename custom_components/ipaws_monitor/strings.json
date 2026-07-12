@@ -1,0 +1,16 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "FEMA IPAWS Monitor Setup",
+        "description": "Please enter the 6-digit SAME/FIPS location codes you want to monitor. Separate multiple codes with a comma.",
+        "data": {
+          "fips_codes": "FIPS/SAME Location Codes"
+        }
+      }
+    },
+    "error": {
+      "invalid_fips": "You must provide at least one valid FIPS code."
+    }
+  }
+}
