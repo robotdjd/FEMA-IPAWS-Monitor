@@ -1,0 +1,11 @@
+{
+  "domain": "ipaws_monitor",
+  "name": "FEMA IPAWS Monitor",
+  "codeowners": [],
+  "dependencies": [],
+  "documentation": [],
+  "iot_class": "cloud_polling",
+  "issue_tracker": [],
+  "requirements": [],
+  "version": "1.0.0"
+}
