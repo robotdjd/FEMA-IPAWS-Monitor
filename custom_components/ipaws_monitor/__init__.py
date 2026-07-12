@@ -8,7 +8,6 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, entry):
     """Set up FEMA IPAWS Monitor from a config entry."""
-    # Store the configured FIPS codes in hass data space
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = entry.data.get("fips_codes", [])
 
