@@ -1,7 +1,6 @@
 """The FEMA IPAWS Monitor integration."""
 import logging
 import os
-from homeassistant.components.http import StaticPathConfig
 
 DOMAIN = "ipaws_monitor"
 PLATFORMS = ["sensor"]
@@ -19,15 +18,16 @@ async def async_setup_entry(hass, entry):
     # Forward the setup to the sensor platform
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     
-    # Register Frontend Card assets using the modern async method
+    # Register Frontend Card assets using the native async call directly
     local_www = hass.config.path("custom_components", DOMAIN, "www")
     if os.path.isdir(local_www):
+        # Using the direct web route registrar to prevent object matching errors
         await hass.http.async_register_static_paths([
-            StaticPathConfig(
-                url_path="/ipaws_monitor_local", 
-                path=local_www, 
-                cache_headers=False
-            )
+            type('StaticPath', (object,), {
+                "url_path": "/ipaws_monitor_local",
+                "path": local_www,
+                "cache_headers": False
+            })
         ])
         
         if "frontend_extra_module_url" not in hass.data:
