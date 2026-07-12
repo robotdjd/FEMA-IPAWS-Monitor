@@ -30,14 +30,14 @@ class IpawsMonitorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     data={"fips_codes": fips_list}
                 )
 
-        # Default configuration values for the UI prompt
+        # Fixed: The default string is now strictly on a single line
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
                     vol.Required(
                         "fips_codes", 
-                        default="039049, 039041"
+                        default="039049,039041"
                     ): str,
                 }
             ),
