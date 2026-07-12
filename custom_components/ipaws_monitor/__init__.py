@@ -23,7 +23,11 @@ async def async_setup_entry(hass, entry):
     local_www = hass.config.path("custom_components", DOMAIN, "www")
     if os.path.isdir(local_www):
         await hass.http.async_register_static_paths([
-            StaticPathConfig("/ipaws_monitor_local", local_www, False)
+            StaticPathConfig(
+                url_path="/ipaws_monitor_local", 
+                path=local_www, 
+                cache_headers=False
+            )
         ])
         
         if "frontend_extra_module_url" not in hass.data:
